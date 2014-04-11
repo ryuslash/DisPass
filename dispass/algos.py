@@ -15,7 +15,7 @@
 import base64
 import hashlib
 
-algorithms = ('dispass1', 'dispass2')
+algorithms = ('dispass1', 'dispass2', 'dispass3')
 '''A tuple of registrered algorithms, used for validation of user input'''
 
 
@@ -33,6 +33,8 @@ def algoObject(algoname):
         return Dispass1()
     elif algoname == 'dispass2':
         return Dispass2()
+    elif algoname == 'dispass3':
+        return Dispass3()
     else:
         return False
 
@@ -50,7 +52,7 @@ class Dispass1:
     '''
 
     @staticmethod
-    def digest(label, password, length=30, seqno=None):
+    def digest(label, password, length=30, seqno=None, chars=None):
         '''Create and return secure hash of message
 
         A secure hash/message digest formed by hashing a string (formed by
@@ -88,7 +90,7 @@ class Dispass2:
     '''
 
     @staticmethod
-    def digest(label, password, length=30, seqno=1):
+    def digest(label, password, length=30, seqno=1, chars=None):
         '''Create and return secure hash of message
 
         A secure hash/message digest formed by hashing a string (formed by
@@ -111,6 +113,56 @@ class Dispass2:
         r = base64.b64encode(sha.hexdigest(), '49').replace('=', '')
 
         return str(r[:length])
+
+
+class Dispass3:
+    '''Dspass3 algorithm
+
+    Tests:
+
+    >>> dispass3 = Dispass3()
+    >>> dispass3.digest('test', 'qqqqqqqq')
+    'CwMRqjqTBVtYCSiVq8LZqjiSCzh5p8'
+    >>> dispass3.digest('test2', 'qqqqqqqq', 50, 10)
+    'qjh5qSp6p8CRp8USrgyVrgT0rztXCVh0BwuUBYh0rgCTCSCUCz'
+    >>> dispass3.digest('test3', 'qqqqqqqq', chars='01')
+    '110110111000001001110010001010'
+    >>> dispass3.digest('test4', 'qqqqqqqq', 50, 10, 'ab')
+    'aababbbaaababaaaabbabbbabaabaabbbbaaaabbaaaaaabaaa'
+    >>> dispass3.digest('test5', 'qqqqqqqq', 50, 10,'abcdef0123456789_:\\'";-')
+    '6c6:c\\'1e5\\'94b-;_56_\\'b\\'6_6\\'-4c\\'c"b\\';"6c52b\\'2\\'b\\'"46\\''
+    '''
+
+    @staticmethod
+    def digest(label, password, length=30, seqno=1, chars=None):
+        '''Create and return a secure hash of message
+
+        A secure hash/message digest formed by hasing a string (formed
+        by concatennating label+seqno+password) with the sha512
+        algorithm, encoding this hash with base64 and stripping it down
+        to the first `length` characters.
+
+        :Parameters:
+            - `label`: String. Labelname
+            - `password`: String. The input password
+            - `length`: Length of output hash (optional)
+            - `seqno`: Integer. Sequence number.
+
+        :Return:
+            - The secure hash of `label` + `seqno` + `password`
+
+        '''
+
+        chars = chars or ('abcdefghijklmnopqrstuvwxyz'
+                          'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                          '0123456789')
+        charcount = len(chars)
+
+        sha = hashlib.sha512()
+        sha.update(str(label) + str(seqno) + str(password))
+        r = base64.b64encode(sha.hexdigest(), '49').replace('=', '')
+
+        return ''.join([chars[ord(c) % charcount] for c in r[:length]])
 
 
 if __name__ == '__main__':

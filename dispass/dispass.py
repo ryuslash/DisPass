@@ -54,6 +54,11 @@ class Settings(object):
     sequence_number = 1
     '''Int. Default sequence number'''
 
+    chars = ('abcdefghijklmnopqrstuvwxyz'
+             'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+             '0123456789')
+    '''String. Default usable characters for dispass3'''
+
 settings = Settings()
 
 

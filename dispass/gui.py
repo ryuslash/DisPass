@@ -139,6 +139,8 @@ class GUI(Frame):
             algo = algos.Dispass1
         elif algorithm == 'dispass2':
             algo = algos.Dispass2
+        elif algorithm == 'dispass3':
+            algo = algos.Dispass3
         else:
             self.warn('Algorithm not implemented in GUI: %s' % algorithm,
                       box_title='Unimplemented algorithm')
