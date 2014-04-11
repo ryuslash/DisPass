@@ -54,6 +54,9 @@ class Settings(object):
     sequence_number = 1
     '''Int. Default sequence number'''
 
+    charset = None
+    '''String. Default charset for dispass3'''
+
 settings = Settings()
 
 

@@ -103,6 +103,7 @@ class Filehandler:
             length = self.settings.passphrase_length
             seqno = self.settings.sequence_number
             algo = self.settings.algorithm
+            charset = self.settings.charset
 
             for arg in line:
                 if 'length=' in arg:
@@ -114,8 +115,10 @@ class Filehandler:
                     algo = arg.strip('algo=')
                 elif 'seqno=' in arg:
                     seqno = arg.strip('seqno=')
+                elif 'charset=' in arg:
+                    charset = arg[8:]  # Strip charset=
 
-            self.labelfile.append((labelname, length, algo, seqno))
+            self.labelfile.append((labelname, length, algo, seqno, charset))
 
         return self
 
@@ -124,20 +127,22 @@ class Filehandler:
             if labelname == label[0]:
                 return label
 
-    def add(self, labelname, length=None, algo=None, seqno=None):
+    def add(self, labelname, length=None, algo=None, seqno=None, charset=None):
         '''Add label to `labelfile`'''
 
         length = length if length else self.settings.passphrase_length
         algo = algo if algo else self.settings.algorithm
         seqno = seqno if seqno else self.settings.sequence_number
+        charset = charset if charset else self.settings.charset
 
         if self.find(labelname):
             return False
 
-        self.labelfile.append((labelname, length, algo, seqno))
+        self.labelfile.append((labelname, length, algo, seqno, charset))
         return True
 
-    def update(self, labelname, length=None, algo=None, seqno=None):
+    def update(self, labelname, length=None, algo=None, seqno=None,
+               charset=None):
         '''Update label in `labelfile`'''
 
         label = self.find(labelname)
@@ -147,7 +152,8 @@ class Filehandler:
 
         params = {'length': length if length else label[1],
                   'algo': algo if algo else label[2],
-                  'seqno': seqno if seqno else label[3]}
+                  'seqno': seqno if seqno else label[3],
+                  'charset': charset if charset else label[4]}
 
         return self.remove(labelname) and self.add(labelname, **params)
 
@@ -196,10 +202,14 @@ class Filehandler:
             if label[2] == 'dispass1':
                 options = ('length={length}  algo={algo}'
                            .format(length=label[1], algo=label[2]))
-            else:
+            elif label[2] == 'dispass2':
                 options = ('length={length}  algo={algo}  seqno={seqno}'
                            .format(length=label[1], algo=label[2],
                                    seqno=label[3]))
+            else:
+                options = ('length={0}  algo={1}  seqno={2}  charset={3}'
+                           .format(*label[1:]))
+
             labelfile += ('{label:{divlen}}  {options}\n'
                           .format(label=label[0], options=options,
                                   divlen=self.longest_label))
