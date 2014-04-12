@@ -138,7 +138,7 @@ dispass add
    Add a new label to the labelfile and generate passphrase.
    The labelspec looks like this:
 
-       label[:size[:algorithm[:sequence_number]]]
+       label[:size[:algorithm[:sequence_number[:charset]]]
 
    Options:
    -i, --interactive  add label in an interactive manner
@@ -157,7 +157,9 @@ dispass generate
    Generate passphrases for one or more labels
 
    Options:
+   -c <charset>, --charset=<charset>     charset to use for generation
    -h, --help                            show this help information
+   -v, --verify                          verify password
    -l <length>, --length=<length>        length of passphrase
    -a <algorithm>, --algo=<algorithm>    algorithm to use for generation
    -s <seqno>, --seqno=<seqno>           sequence number to use for generation
@@ -212,6 +214,7 @@ dispass list
    Column 52-54: length            3 chars wide
    Column 56-70: hash algo        15 chars wide
    Column 72-74: sequence number   3 chars wide
+   Column 76-82: charset           6 chars wide
 
    Options:
    -h, --help  show this help information
@@ -240,7 +243,7 @@ dispass update
 
 ::
 
-   usage: dispass update [-n] [-s] <label> [<size>]:[<algorithm>]:[<sequence_number>]
+   usage: dispass update [-n] [-s] <label> [<size>]:[<algorithm>]:[<sequence_number>]:[<charset>]
           dispass update [-h]
 
    Update information for a label
