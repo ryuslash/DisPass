@@ -69,7 +69,7 @@ class Command(CommandBase):
                     return 1
 
             for arg in set(self.args):
-                labelspec = arg.split(':')
+                labelspec = arg.split(':', 4)
                 params = len(labelspec)
 
                 length = 0
@@ -95,8 +95,13 @@ class Command(CommandBase):
                 if not seqno:
                     seqno = settings.sequence_number
 
+                chars = (params >= 5
+                         and ''.join(sorted(set(labelspec[4]),
+                                            key=labelspec[4].index))
+                         or settings.chars)
+
                 if lf.add(labelname=labelspec[0], length=length, algo=algo,
-                          seqno=seqno):
+                          seqno=seqno, chars=chars):
                     newlabels.append(labelspec[0])
                     if not self.flags['silent']:
                         print("Label '{name}' saved".format(name=labelspec[0]))
