@@ -90,7 +90,7 @@ class CLI:
 
         return inp
 
-    def generate(self, password, (label, length, algo, seqno)):
+    def generate(self, password, (label, length, algo, seqno, charset)):
         '''Generate passphrase and store result in `passphrases`
 
         :Parameters:
@@ -106,7 +106,7 @@ class CLI:
         hasher = algoObject(algo)
         if hasher:
             self.passphrases.update({label: hasher.digest(
-                label, password, length, seqno
+                label, password, length, seqno, charset
             )})
 
     def output(self):
