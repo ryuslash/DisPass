@@ -31,7 +31,7 @@ class Command(CommandBase):
     description = (
         'Add a new label to the labelfile and generate passphrase.\n'
         'The labelspec looks like this:\n\n'
-        '    label[:size[:algorithm[:sequence_number]]]'
+        '    label[:size[:algorithm[:sequence_number[:charset]]]]'
     )
     optionList = (
         ('interactive', ('i', False, 'add label in an interactive manner')),
@@ -95,8 +95,10 @@ class Command(CommandBase):
                 if not seqno:
                     seqno = settings.sequence_number
 
+                charset = params >= 5 and labelspec[4] or settings.charset
+
                 if lf.add(labelname=labelspec[0], length=length, algo=algo,
-                          seqno=seqno):
+                          seqno=seqno, charset=charset):
                     newlabels.append(labelspec[0])
                     if not self.flags['silent']:
                         print("Label '{name}' saved".format(name=labelspec[0]))
