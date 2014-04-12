@@ -137,7 +137,7 @@ dispass add
    Add a new label to the labelfile and generate passphrase.
    The labelspec looks like this:
 
-       label[:size[:algorithm[:sequence_number]]]
+       label[:size[:algorithm[:sequence_number[:characters]]]
 
    Options:
    -i, --interactive  add label in an interactive manner
@@ -156,13 +156,15 @@ dispass generate
    Generate passphrases for one or more labels
 
    Options:
-   -h, --help                            show this help information
-   -l <length>, --length=<length>        length of passphrase
-   -a <algorithm>, --algo=<algorithm>    algorithm to use for generation
-   -s <seqno>, --seqno=<seqno>           sequence number to use for generation
-   -p <password>, --password=<password>  password to use for generation
-   -o, --stdout                          output passphrase(s) directly to stdout
-   --silent                              do not show a prompt when errors occur
+   -c <characters>, --chars=<characters>  characters to use for generation
+   -h, --help                             show this help information
+   -v, --verify                           verify password
+   -l <length>, --length=<length>         length of passphrase
+   -a <algorithm>, --algo=<algorithm>     algorithm to use for generation
+   -s <seqno>, --seqno=<seqno>            sequence number to use for generation
+   -p <password>, --password=<password>   password to use for generation
+   -o, --stdout                           output passphrase(s) directly to stdout
+   --silent                               do not show a prompt when errors occur
 
 
 dispass gui
@@ -196,6 +198,7 @@ dispass list
    Column 52-54: length            3 chars wide
    Column 56-70: hash algo        15 chars wide
    Column 72-74: sequence number   3 chars wide
+   Column 76:    characters      to end of line
 
    Options:
    -h, --help  show this help information
@@ -224,7 +227,7 @@ dispass update
 
 ::
 
-   usage: dispass update [-n] [-s] <label> [<size>]:[<algorithm>]:[<sequence_number>]
+   usage: dispass update [-n] [-s] <label> [<size>]:[<algorithm>]:[<sequence_number>]:[<characters>]
           dispass update [-h]
 
    Update information for a label
