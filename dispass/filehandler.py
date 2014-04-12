@@ -176,10 +176,14 @@ class Filehandler:
         if sort:
             self.labelfile.sort()
         labelnames = []
+        labelchars = []
         for label in self.labelfile:
             labelnames.append(label[0])
+            labelchars.append(label[4])
         if labelnames:
             self.longest_label = len(max(labelnames, key=len))
+        if labelchars:
+            self.longest_chars = len(max(labelchars, key=len))
 
     def save(self):
         '''Save `labelfile` to file'''
@@ -250,6 +254,7 @@ class Filehandler:
         * Column 52-54: length (3 chars wide)
         * Column 56-70: hash algo (15 chars wide)
         * Column 72-74: sequence number (3 chars wide)
+        * Column 76: characters (to end of line)
 
         If fixed columns is false an ascii table is printed with a variable
         width depending on the length of the longest label.
@@ -263,24 +268,27 @@ class Filehandler:
 
         if fixed_columns:
             for label in self.labelfile:
-                print('{:50} {:3} {:15} {:3}'
+                print('{:50} {:3} {:15} {:3} {}'
                       .format(label[0][:50], str(label[1])[:3],
-                              label[2][:15], str(label[3])))
+                              label[2][:15], str(label[3]), label[4]))
         else:
             divlen = self.longest_label
+            chrlen = self.longest_chars
             if not divlen:
                 return
-            print('+-{spacer:{fill}}-+--------+----------+--------+\n'
-                  '| {title:{fill}} | Length | Algo     | Number | \n'
-                  '+-{spacer:{fill}}-+--------+----------+--------+'
-                  .format(spacer='-' * divlen, title='Label', fill=divlen))
+            print('+-{spacer:{fill}}-+--------+----------+--------+-{spacer2:{fill2}}-+\n'
+                  '| {title:{fill}} | Length | Algo     | Number | {title2:{fill2}} |\n'
+                  '+-{spacer:{fill}}-+--------+----------+--------+-{spacer2:{fill2}}-+'
+                  .format(spacer='-' * divlen, title='Label', fill=divlen,
+                          spacer2='-' * chrlen, title2='Chars', fill2=chrlen))
 
             for label in self.labelfile:
-                print('| {:{fill}} |    {:3} | {:8} |      {:3>} |'
+                print('| {:{fill}} |    {:3} | {:8} |      {:3>} | {:{fill2}} |'
                       .format(label[0], label[1], label[2], int(label[3]),
-                              fill=divlen))
-            print('+-{:{fill}}-+--------+----------+--------+'
-                  .format('-' * divlen, fill=divlen))
+                              label[4], fill=divlen, fill2=chrlen))
+            print('+-{:{fill}}-+--------+----------+--------+-{:{fill2}}-+'
+                  .format('-' * divlen, '-' * chrlen,
+                          fill=divlen, fill2=chrlen))
 
     def promptForCreation(self, silent=False):
         '''Create the labelfile, optionally warning the user beforehand
