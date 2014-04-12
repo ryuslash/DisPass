@@ -25,7 +25,7 @@ class Command(CommandBase):
 
     usagestr = (
         'usage: dispass update [-n] [-s] <label> '
-        '[<size>]:[<algorithm>]:[<sequence_number>]\n'
+        '[<size>]:[<algorithm>]:[<sequence_number>]:[<characters>]\n'
         '       dispass update [-h]'
     )
 
@@ -56,7 +56,7 @@ class Command(CommandBase):
                 return 1
 
         labelname = self.args[0]
-        params = self.args[1].split(':')
+        params = self.args[1].split(':', 3)
 
         try:
             length = int(params[0]) if params[0] else None
@@ -75,7 +75,12 @@ class Command(CommandBase):
             except ValueError:
                 pass
 
-        if lf.update(labelname, length=length, algo=algo, seqno=seqno):
+        chars = None
+        if params[3]:
+            chars = params[3]
+
+        if lf.update(labelname, length=length, algo=algo, seqno=seqno,
+                     chars=chars):
             if not self.flags['silent']:
                 print("Label '{name}' updated".format(name=labelname))
         else:
