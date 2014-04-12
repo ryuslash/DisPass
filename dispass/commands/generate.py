@@ -32,6 +32,7 @@ class Command(CommandBase):
         "Use the '-v' flag to ask for password twice to avoid typing errors"
     )
     optionList = (
+        ('chars',   ('c', '<characters>', 'characters to use for generation')),
         ('help',    ('h', False, 'show this help information')),
         ('verify',  ('v', False, 'verify password')),
         ('length',  ('l', '<length>', 'length of passphrase')),
@@ -67,6 +68,7 @@ class Command(CommandBase):
         algo = None
         length = None
         seqno = None
+        chars = None
 
         if self.flags['algo']:
             if self.flags['algo'] in algorithms:
@@ -79,6 +81,8 @@ class Command(CommandBase):
                 return 1
         if self.flags['seqno']:
             seqno = self.flags['seqno']
+        if self.flags['chars']:
+            chars = self.flags['chars']
 
         console = CLI(lf)
         console.verifyPassword = self.flags['verify']
@@ -93,12 +97,14 @@ class Command(CommandBase):
             if labeltup:
                 console.generate(password, (arg, length or labeltup[1],
                                             algo or labeltup[2],
-                                            seqno or labeltup[3]))
+                                            seqno or labeltup[3],
+                                            chars or labeltup[4]))
             else:
                 console.generate(password, (
                     arg, length or self.settings.passphrase_length,
                     algo or self.settings.algorithm,
-                    seqno or self.settings.sequence_number))
+                    seqno or self.settings.sequence_number,
+                    chars or self.settings.chars))
         del password
 
         if self.flags['stdout']:
