@@ -260,6 +260,7 @@ class Filehandler:
         * Column 52-54: length (3 chars wide)
         * Column 56-70: hash algo (15 chars wide)
         * Column 72-74: sequence number (3 chars wide)
+        * Column 76-82: characters (6 chars wide)
 
         If fixed columns is false an ascii table is printed with a variable
         width depending on the length of the longest label.
@@ -273,23 +274,23 @@ class Filehandler:
 
         if fixed_columns:
             for label in self.labelfile:
-                print('{:50} {:3} {:15} {:3}'
+                print('{:50} {:3} {:15} {:3} {:6}'
                       .format(label[0][:50], str(label[1])[:3],
-                              label[2][:15], str(label[3])))
+                              label[2][:15], str(label[3]), label[4]))
         else:
             divlen = self.longest_label
             if not divlen:
                 return
-            print('+-{spacer:{fill}}-+--------+----------+--------+\n'
-                  '| {title:{fill}} | Length | Algo     | Number | \n'
-                  '+-{spacer:{fill}}-+--------+----------+--------+'
+            print('+-{spacer:{fill}}-+--------+----------+--------+---------+\n'
+                  '| {title:{fill}} | Length | Algo     | Number | Charset |\n'
+                  '+-{spacer:{fill}}-+--------+----------+--------+---------+'
                   .format(spacer='-' * divlen, title='Label', fill=divlen))
 
             for label in self.labelfile:
-                print('| {:{fill}} |    {:3} | {:8} |      {:3>} |'
+                print('| {:{fill}} |    {:3} | {:8} |      {:3>} | {:6}  |'
                       .format(label[0], label[1], label[2], int(label[3]),
-                              fill=divlen))
-            print('+-{:{fill}}-+--------+----------+--------+'
+                              label[4], fill=divlen))
+            print('+-{:{fill}}-+--------+----------+--------+---------+'
                   .format('-' * divlen, fill=divlen))
 
     def promptForCreation(self, silent=False):
